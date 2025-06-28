@@ -1,0 +1,16 @@
+# Archivos de entorno virtual
+venv/
+.env
+
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+
+# Archivos de IDE (ej. VS Code)
+.vscode/
+
+# Archivos de log
+*.log
+
+# Archivos de Jupyter (si usas)
+.ipynb_checkpoints/
