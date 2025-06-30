@@ -66,7 +66,10 @@ if choice == "Dashboard del Último Mes":
             # Ocultar columnas específicas
             columns_to_hide = ['RECORD_NUMBER', 'Mes', 'Año']
             columns_to_show = [col for col in df_latest_month.columns if col not in columns_to_hide]
-            st.dataframe(df_latest_month[columns_to_show], hide_index=True) # Muestra todas las filas del último mes sin las columnas ocultas y sin el índice
+            df_display = df_latest_month[columns_to_show].copy()
+            if 'DAY' in df_display.columns:
+                df_display['DAY'] = df_display['DAY'].dt.strftime('%d/%m/%Y') # Formato DD/MM/AAAA
+            st.dataframe(df_display, hide_index=True) # Muestra todas las filas del último mes sin las columnas ocultas y sin el índice
 
             # --- Ejemplo de visualización para el dashboard del último mes ---
             # Puedes personalizar esto con los gráficos y métricas que quieras
@@ -74,7 +77,7 @@ if choice == "Dashboard del Último Mes":
             
             # Asegúrate de que 'Temperatura_Maxima' y 'Temperatura_Minima' (o similar) existen en tu CSV
             # Adapta estos nombres a tus columnas reales
-            temperatura_cols = [col for col in ['HIGH_TEMP', 'LOW_TEMP', 'MEAN_TEMP'] if col in df_latest_month.columns]
+            temperatura_cols = [col for col in ['TEMP_MAX', 'TEMP_MIN', 'TEMP_MEDIA'] if col in df_latest_month.columns]
 
             if temperatura_cols:
                 fig, ax = plt.subplots(figsize=(12, 6))
