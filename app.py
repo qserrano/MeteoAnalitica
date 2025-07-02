@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from modules.monthly_comparison import show_monthly_comparison
 from modules.historical_averages import show_historical_averages
 from modules.extreme_analysis import show_extreme_analysis
+from modules.annual_comparison import show_annual_comparison
 
 # --- Configuración básica de la página ---
 st.set_page_config(
@@ -46,13 +47,13 @@ st.sidebar.info("MeteoAnalitica: Tu herramienta para explorar el clima de La Pob
 st.sidebar.markdown("---")
 
 st.sidebar.title("Navegación")
-options = ["Dashboard del Último Mes", "Comparación Mensual Detallada", "Promedios Históricos", "Análisis de Extremos Climáticos"] # ¡Añade la nueva opción!
+options = ["Dashboard ultimos registros", "Comparación Mensual Detallada", "Promedios Históricos", "Análisis de Extremos Climáticos", "Comparación Anual"] # ¡Añade la nueva opción!
 choice = st.sidebar.radio("Ir a:", options)
 
 # --- Contenido Principal Basado en la Selección del Menú ---
 
-if choice == "Dashboard del Último Mes":
-    st.header("📊 Dashboard del Último Mes")
+if choice == "Dashboard ultimos registros":
+    st.header("📊 Dashboard ultimos registros")
     st.write("Aquí se muestran los análisis clave del mes más reciente disponible en tus datos.")
 
     if not df.empty:
@@ -62,14 +63,16 @@ if choice == "Dashboard del Último Mes":
         df_latest_month = df[(df['DAY'].dt.month == latest_date.month) & (df['DAY'].dt.year == latest_date.year)].copy()
 
         if not df_latest_month.empty:
-            st.write(f"Datos del mes de **{latest_date.strftime('%B de %Y')}**:") # Muestra el nombre del mes y año
+            st.write(f"**Últimos 7 registros disponibles:**") # Cambiado para mostrar los últimos 7 registros
             # Ocultar columnas específicas
             columns_to_hide = ['RECORD_NUMBER', 'Mes', 'Año']
             columns_to_show = [col for col in df_latest_month.columns if col not in columns_to_hide]
             df_display = df_latest_month[columns_to_show].copy()
             if 'DAY' in df_display.columns:
                 df_display['DAY'] = df_display['DAY'].dt.strftime('%d/%m/%Y') # Formato DD/MM/AAAA
-            st.dataframe(df_display, hide_index=True) # Muestra todas las filas del último mes sin las columnas ocultas y sin el índice
+            # Mostrar solo los últimos 7 registros
+            df_display = df_display.tail(7)
+            st.dataframe(df_display, hide_index=True) # Muestra los últimos 7 registros sin las columnas ocultas y sin el índice
 
             # --- Ejemplo de visualización para el dashboard del último mes ---
             # Puedes personalizar esto con los gráficos y métricas que quieras
@@ -119,3 +122,10 @@ elif choice == "Análisis de Extremos Climáticos":
         show_extreme_analysis(df.copy()) # Pasa una copia para evitar SettingWithCopyWarning
     else:
         st.error("No hay datos cargados para realizar el análisis de extremos climáticos.")
+
+elif choice == "Comparación Anual":
+    if not df.empty:
+        # Llamada a la función del módulo de comparación anual
+        show_annual_comparison(df.copy()) # Pasa una copia para evitar SettingWithCopyWarning
+    else:
+        st.error("No hay datos cargados para realizar la comparación anual.")
